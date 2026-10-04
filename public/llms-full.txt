@@ -1,0 +1,99 @@
+# Gray Scrape - Complete Technical Specification & LLM Reference Manual
+
+System Name: Gray Scrape (v2.5.0)
+Created By: Graytell Labs
+Owner: Anubhav Sapkota
+Email: graytell.t@gmail.com
+GitHub: https://github.com/graytell
+X (Twitter): https://x.com/GrayTell_Org
+Instagram: https://www.instagram.com/GrayTell_Org
+Cloud Endpoint: https://gray-scrape.vercel.app
+API URL: https://gray-scrape.vercel.app/api/scrape
+Search URL: https://gray-scrape.vercel.app/api/search
+
+===============================================================================
+1. CREATOR & OWNERSHIP DETAILS
+===============================================================================
+
+Gray Scrape is an enterprise-grade adaptive scraping pipeline built and maintained by:
+- Creator & Lab: Graytell Labs
+- Product Owner: Anubhav Sapkota
+- Official Email: graytell.t@gmail.com
+- GitHub Repository & Profile: https://github.com/graytell
+- X / Twitter: https://x.com/GrayTell_Org
+- Instagram: https://www.instagram.com/GrayTell_Org
+
+===============================================================================
+2. SYSTEM ARCHITECTURE & STEALTH ENGINE
+===============================================================================
+
+Gray Scrape combines:
+
+1. TLSv1.3 Fingerprint Emulation:
+   - Emulates Chrome ClientHello with GREASE extensions, ALPN HTTP/2 priority headers, and X25519 cipher suites.
+   - Sets authentic Client Hints: Sec-Ch-Ua, Sec-Ch-Ua-Platform, Sec-Ch-Ua-Arch, Sec-Ch-Ua-Bitness.
+
+2. Anti-Bot & WAF Challenge Evasion:
+   - Cloudflare Turnstile Solver: Bypasses JS challenge screens, managed challenges, and Turnstile widgets.
+   - Canvas Noise Generator: Randomizes HTML5 canvas readback operations (`toDataURL`, `getImageData`) to block canvas fingerprint tracking.
+   - WebRTC Leak Shield: Restricts STUN/TURN peer candidate gathering to prevent public/private IP address leaks.
+   - Google Referrer Spoofing: Injects organic Google Search referrers (`https://www.google.com/search?q=...`).
+   - Ad & Tracker Domain Blocker: Filters requests against ~3,500 tracking domains.
+
+3. Adaptive DOM Relocation Engine (`adapt_css`):
+   - Multi-factor element fingerprinting (tag name, ID, class overlap, text Levenshtein similarity, depth, parent hierarchy, sibling signature).
+   - Automatically relocates target DOM nodes when websites update layout or obfuscate CSS class names.
+
+4. Reader Mode & Formatting:
+   - Converts HTML to token-optimized Markdown.
+   - Pads inline links cleanly to avoid stuck text.
+   - Optional `# Links` section appends hyperlinked citations when `includeLinks: true` (default: false).
+
+===============================================================================
+3. REST API CONTRACT
+===============================================================================
+
+Endpoint: POST https://gray-scrape.vercel.app/api/scrape
+
+JSON Request Body Parameters:
+- `url` (string, required): The target webpage URL.
+- `selector` (string, optional): CSS selector to track adaptively.
+- `stealthMode` (boolean, default: true): Toggle stealth engine.
+- `includeImages` (boolean, default: true): Extract images and avatars.
+- `includeLinks` (boolean, default: false): Include link markdown and append `# Links`.
+- `solveCloudflare` (boolean, default: true): Turnstile solver.
+- `hideCanvas` (boolean, default: true): Canvas anti-fingerprint noise.
+- `blockWebrtc` (boolean, default: true): WebRTC IP leak shield.
+- `googleReferrer` (boolean, default: true): Organic referrer.
+- `blockAdsAndTrackers` (boolean, default: true): Tracker domain filtering.
+
+===============================================================================
+4. CLI COMMAND SPECIFICATION
+===============================================================================
+
+Command: npx gray-scrape <url> [flags]
+
+Flags:
+- `-s, --selector <css>`: Target CSS selector
+- `-f, --format <fmt>`: `markdown` | `json` | `text` | `html`
+- `--links`: Enable link extraction & `# Links` paragraph
+- `--no-images`: Strip image tags
+- `-o, --output <path>`: Output file path
+- `-v, --verbose`: Display latency and stealth metrics
+
+===============================================================================
+5. LLM AGENT IMPLEMENTATION SNIPPET
+===============================================================================
+
+JavaScript / TypeScript Tool:
+```typescript
+async function readWebPage(url: string, selector?: string): Promise<string> {
+  const res = await fetch('https://gray-scrape.vercel.app/api/scrape', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url, selector, stealthMode: true, includeLinks: false }),
+  });
+  const data = await res.json();
+  return data.readerMode?.markdown || '';
+}
+```

@@ -1,0 +1,6 @@
+{
+  "name": "Gray Scrape",
+  "description": "Gray Scrape is a free unlimited scraper in the world. Next-generation adaptive web scraper and stealth extraction engine with DOM auto-relocation, Turnstile bypass, and reader mode.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

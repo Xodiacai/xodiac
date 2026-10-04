@@ -1,0 +1,10 @@
+# Gray Scrape - Robots.txt
+# Created by Graytell Labs (Owner: Anubhav Sapkota)
+
+User-agent: *
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /sitemap.xml
+
+Sitemap: https://gray-scrape.vercel.app/sitemap.xml

@@ -1,0 +1,135 @@
+# Gray Scrape
+
+> Gray Scrape is a next-generation adaptive, anti-bot web scraper and stealth extraction engine. It features DOM auto-relocation (`adapt_css`), Cloudflare Turnstile bypass, TLSv1.3 client fingerprinting, canvas anti-fingerprint noise, and token-optimized Reader Mode output.
+
+Website: https://gray-scrape.vercel.app
+API Base Endpoint: https://gray-scrape.vercel.app/api/scrape
+Search Base Endpoint: https://gray-scrape.vercel.app/api/search
+
+## Publisher & Ownership Information
+
+- **Created By**: Graytell Labs
+- **Owner**: Anubhav Sapkota
+- **Contact Email**: graytell.t@gmail.com
+- **GitHub**: https://github.com/graytell
+- **X (Twitter)**: https://x.com/GrayTell_Org
+- **Instagram**: https://www.instagram.com/GrayTell_Org
+
+## Key Features
+
+- **Stealthy Fetcher**: Bypasses Cloudflare Turnstile, 503 bot barriers, and WAF challenge pages.
+- **Adaptive Relocator**: Self-healing CSS locator (`adapt_css`) that tracks elements even when website HTML/classes change or mutate.
+- **Reader Mode**: Extracts clean Markdown with navigation, footers, boilerplate, and ad scripts stripped out.
+- **Link Separation**: Paragraph text links are padded cleanly. Optional `# Links` section appends hyperlinked citations when requested (`includeLinks: true`).
+- **Media & Avatars**: Automatically extracts high-res hero images, figures, and author profile pictures.
+- **CLI & Tool Calling**: Run via `npx gray-scrape <url>` or integrate into AI agents (LangChain, OpenAI Agents, Gemini, CrewAI).
+
+## API Documentation
+
+### Extract Webpage Content (`POST /api/scrape`)
+
+Request headers:
+- `Content-Type: application/json`
+
+Request body schema:
+```json
+{
+  "url": "https://openai.com/research",
+  "selector": "h1, article",
+  "stealthMode": true,
+  "includeImages": true,
+  "includeLinks": false,
+  "solveCloudflare": true,
+  "hideCanvas": true,
+  "blockWebrtc": true,
+  "googleReferrer": true,
+  "blockAdsAndTrackers": true
+}
+```
+
+Response JSON schema snippet:
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "metadata": {
+    "title": "Document Title",
+    "description": "Excerpt summary",
+    "wordCount": 1250,
+    "readTimeMinutes": 6
+  },
+  "readerMode": {
+    "markdown": "# Document Title\n\nClean markdown text content...",
+    "contentHtml": "<div>...</div>"
+  },
+  "stealthFingerprint": {
+    "cloudflareSolver": true,
+    "canvasNoiseProtection": true,
+    "tlsProfile": "TLSv1.3 (GREASE, X25519)"
+  }
+}
+```
+
+### Search Web Without API Keys (`GET /api/search?q=<query>`)
+
+Response JSON snippet:
+```json
+{
+  "query": "next generation AI agents",
+  "count": 6,
+  "results": [
+    {
+      "title": "Article Title",
+      "url": "https://example.com/article",
+      "snippet": "Short excerpt...",
+      "points": 420
+    }
+  ]
+}
+```
+
+## CLI Usage
+
+```bash
+# Instant extraction to Markdown
+npx gray-scrape https://openai.com/research
+
+# Save directly to file
+npx gray-scrape https://openai.com/research -o openai.md
+
+# Extract with hyperlinks section
+npx gray-scrape https://openai.com/research --links
+
+# Focused selector with JSON format
+npx gray-scrape https://news.ycombinator.com -s ".titleline" -f json
+
+# Search web without API keys
+npx gray-scrape search "quantum computing"
+```
+
+## AI Agent Integration (`read_web_page` Tool)
+
+```typescript
+async function readWebPage(url: string): Promise<string> {
+  const res = await fetch('https://gray-scrape.vercel.app/api/scrape', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url, stealthMode: true, includeLinks: false }),
+  });
+  const data = await res.json();
+  return data.readerMode?.markdown || '';
+}
+```
+
+## Creator Social Links
+
+- Official X / Twitter: https://x.com/GrayTell_Org
+- Instagram: https://www.instagram.com/GrayTell_Org
+- GitHub Profile: https://github.com/graytell
+- Email: graytell.t@gmail.com
+
+## Links & Full Spec
+
+- Full Documentation: https://gray-scrape.vercel.app/docs
+- Live Playground: https://gray-scrape.vercel.app/playground
+- Full LLM Reference: https://gray-scrape.vercel.app/llms-full.txt
